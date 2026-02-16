@@ -1,0 +1,97 @@
+import {makeProject, Random} from '@revideo/core';
+
+import {Audio, Img, makeScene2D, Txt, Video, Rect} from '@revideo/2d';
+import {all, chain, createRef, waitFor} from '@revideo/core';
+
+
+const get_random = (min: number, max: number) => {
+  return Math.random() * (max - min) + min;
+}
+
+/**
+ * The Revideo scene
+ */
+const scene = makeScene2D('scene', function* (view) {
+  
+  const introVideo = createRef<Video>();
+  const shutterAudio = createRef<Audio>();
+  
+  // Nombres de tus archivos en public/fotos/
+  const fotos = ['Civil01.avif', 'Civil02.avif', 'Civil03.avif']; 
+  const duracionPorFoto = 3; // segundos
+
+  // 1. Parte del Intro: Armando el rollo
+  view.add(
+    <>
+        <Video
+      ref={introVideo}
+      src="https://revideo-example-assets.s3.amazonaws.com/stars.mp4"
+      size={['100%', '100%']}
+      play={true} 
+    />
+    </>
+  );
+
+  yield introVideo().play();
+
+  // Esperamos a que termine el video de intro (ajusta el tiempo según tu clip)
+  yield* waitFor(introVideo().getDuration()); // Espera 5 segundos (o el tiempo que dure tu intro)
+  // introVideo().remove();
+
+  // 2. Loop de Fotos Analógicas
+  for (const foto of fotos) {
+    // const fotoRef = createRef<Img>();
+    const contenedorRef = createRef<Rect>();
+    
+    view.add(
+      <>
+        {/* Audio del obturador */}
+        <Audio src="/shutter.mp3" play={true} />
+        
+        {/* Marco Blanco y Foto */}
+     <Rect
+      ref={contenedorRef}
+      width={"85%"} // Ajusta el tamaño total del "papel"
+      fill={'white'}
+      padding={[40, 40, 40, 40]} // [Arriba, Derecha, Abajo, Izquierda] - Más abajo para estilo Polaroid
+      shadowBlur={40}
+      shadowColor={'rgba(0,0,0,0.3)'}
+      rotation={get_random(-5, 5)}
+      layout // Importante: Esto hace que respete el padding para los hijos
+    >
+      {/* La imagen ahora es hija del Rect y respetará el espacio interno */}
+      <Img
+        src={`/photos/${foto}`}
+        width={'100%'} // Ocupa el 100% del espacio disponible tras el padding
+        radius={4}     // Un pequeño redondeado sutil en las esquinas de la foto
+      />
+    </Rect>
+      </>
+    );
+
+    yield* chain(
+      all(contenedorRef().scale(1.05, duracionPorFoto))
+    );
+
+    // yield* waitFor(1); 
+
+    // Animación: Zoom sutil (de 100% a 105%) durante los 3 segundos
+    // yield* fotoRef().scale(1.05, duracionPorFoto);
+    
+    // Limpiamos la foto antes de la siguiente
+    contenedorRef().remove();
+  }
+});
+
+/**
+ * The final revideo project
+ */
+export default makeProject({
+  scenes: [scene],
+  settings: {
+    // Example settings:
+    shared: {
+      size: {x: 1080, y: 1920},
+    },
+  },
+});
