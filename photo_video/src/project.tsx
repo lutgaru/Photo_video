@@ -93,5 +93,13 @@ export default makeProject({
     shared: {
       size: {x: 1080, y: 1920},
     },
+     rendering: {
+      exporter: {
+        name: '@revideo/core/ffmpeg',
+        options: {
+          format: 'mp4'
+        }
+      }
+    }
   },
 });

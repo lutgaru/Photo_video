@@ -1,5 +1,8 @@
 import {renderVideo} from '@revideo/renderer';
 
+process.env.FFMPEG_PATH = 'ffmpeg';
+process.env.FFPROBE_PATH = 'ffprobe';
+
 async function render() {
   console.log('Rendering video...');
 
