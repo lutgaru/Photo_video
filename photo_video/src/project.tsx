@@ -2,6 +2,7 @@ import {makeProject, Random} from '@revideo/core';
 
 import {Audio, Img, makeScene2D, Txt, Video, Rect} from '@revideo/2d';
 import {all, chain, createRef, waitFor} from '@revideo/core';
+import { myPhotos } from './photoList';
 
 
 const get_random = (min: number, max: number) => {
@@ -25,7 +26,7 @@ const scene = makeScene2D('scene', function* (view) {
     <>
         <Video
       ref={introVideo}
-      src="https://revideo-example-assets.s3.amazonaws.com/stars.mp4"
+      src="/intro.mp4"
       size={['100%', '100%']}
       play={true} 
     />
@@ -35,23 +36,23 @@ const scene = makeScene2D('scene', function* (view) {
   yield introVideo().play();
 
   // Esperamos a que termine el video de intro (ajusta el tiempo según tu clip)
-  yield* waitFor(introVideo().getDuration()); // Espera 5 segundos (o el tiempo que dure tu intro)
+  yield* waitFor(introVideo().getDuration()+1); // Espera 5 segundos (o el tiempo que dure tu intro)
   // introVideo().remove();
 
   // 2. Loop de Fotos Analógicas
-  for (const foto of fotos) {
+  for (const foto of myPhotos) {
     // const fotoRef = createRef<Img>();
     const contenedorRef = createRef<Rect>();
     
     view.add(
       <>
         {/* Audio del obturador */}
-        <Audio src="/shutter.mp3" play={true} />
+        <Audio src="/shutter.mp3" play={true} volume={0.1}/>
         
         {/* Marco Blanco y Foto */}
      <Rect
       ref={contenedorRef}
-      width={"85%"} // Ajusta el tamaño total del "papel"
+      width={"95%"} // Ajusta el tamaño total del "papel"
       fill={'white'}
       padding={[40, 40, 40, 40]} // [Arriba, Derecha, Abajo, Izquierda] - Más abajo para estilo Polaroid
       shadowBlur={40}
