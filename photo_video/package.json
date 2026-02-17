@@ -3,6 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
+    "generate-list": "node generate-list.js",
+    "prestart": "npm run generate-list",
     "start": "revideo editor --projectFile ./src/project.tsx",
     "render": "tsc && node dist/render.js"
   },
