@@ -1,6 +1,6 @@
 import {makeProject, Random} from '@revideo/core';
 
-import {Audio, Img, makeScene2D, Txt, Video, Rect} from '@revideo/2d';
+import {Audio, Img, makeScene2D, Txt, Video, Rect, Gradient} from '@revideo/2d';
 import {all, chain, createRef, waitFor} from '@revideo/core';
 import { myPhotos } from './photoList';
 
@@ -16,11 +16,41 @@ const scene = makeScene2D('scene', function* (view) {
   
   const introVideo = createRef<Video>();
   const shutterAudio = createRef<Audio>();
+  const bgAudio = createRef<Audio>();
   
   // Nombres de tus archivos en public/fotos/
   const fotos = ['Civil01.avif', 'Civil02.avif', 'Civil03.avif']; 
   const duracionPorFoto = 3; // segundos
 
+view.add(
+    <Audio 
+      ref={bgAudio} 
+      src="/Background.mp3" 
+      play={true} 
+      volume={0.4} // Lower volume so it's "background"
+      loop={true} 
+      time={25}
+    />
+  );
+  
+  view.add(
+    <Rect
+      width={'100%'}
+      height={'100%'}
+      fill={
+        new Gradient({
+          fromX: -540, // Left
+          fromY: -960, // Top
+          toX: 540,    // Right
+          toY: 960,    // Bottom
+          stops: [
+            { offset: 0, color: '#1b1b1b' }, // Light grey/warm tone
+            { offset: 1, color: '#303030' }, // Deeper grey
+          ],
+        })
+      }
+    />
+  );
   // 1. Parte del Intro: Armando el rollo
   view.add(
     <>
@@ -29,6 +59,9 @@ const scene = makeScene2D('scene', function* (view) {
       src="/intro.mp4"
       size={['100%', '100%']}
       play={true} 
+      volume={0}
+      width={1920}  
+      height={1080}
     />
     </>
   );
@@ -36,9 +69,11 @@ const scene = makeScene2D('scene', function* (view) {
   yield introVideo().play();
 
   // Esperamos a que termine el video de intro (ajusta el tiempo según tu clip)
-  yield* waitFor(introVideo().getDuration()+1); // Espera 5 segundos (o el tiempo que dure tu intro)
-  // introVideo().remove();
+  yield* waitFor(introVideo().getDuration()-2.5); // Espera 5 segundos (o el tiempo que dure tu intro)
 
+  yield introVideo().pause(); 
+
+  yield* waitFor(1); // Pequeña pausa antes de empezar con las fotos
   // 2. Loop de Fotos Analógicas
   for (const foto of myPhotos) {
     // const fotoRef = createRef<Img>();
@@ -47,7 +82,7 @@ const scene = makeScene2D('scene', function* (view) {
     view.add(
       <>
         {/* Audio del obturador */}
-        <Audio src="/shutter.mp3" play={true} volume={0.1}/>
+        <Audio src="/shutter.mp3" play={true} volume={0.7}/>
         
         {/* Marco Blanco y Foto */}
      <Rect
@@ -82,6 +117,7 @@ const scene = makeScene2D('scene', function* (view) {
     // Limpiamos la foto antes de la siguiente
     contenedorRef().remove();
   }
+  // yield* bgAudio().volume(0, 2);
 });
 
 /**
