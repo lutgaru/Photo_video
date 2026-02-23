@@ -1,4 +1,4 @@
-import {makeProject, Random} from '@revideo/core';
+import {makeProject, Random, tween} from '@revideo/core';
 
 import {Audio, Img, makeScene2D, Txt, Video, Rect, Gradient} from '@revideo/2d';
 import {all, chain, createRef, waitFor} from '@revideo/core';
@@ -32,7 +32,10 @@ view.add(
       time={25}
     />
   );
-  
+
+  view.add(
+  <Audio src="/shutter.mp3" play={false} volume={0.7} ref={shutterAudio}/>
+  );  
   view.add(
     <Rect
       width={'100%'}
@@ -78,11 +81,12 @@ view.add(
   for (const foto of myPhotos) {
     // const fotoRef = createRef<Img>();
     const contenedorRef = createRef<Rect>();
+    shutterAudio().save();
+    yield shutterAudio().play(); // Reproducir el sonido del obturador cada vez que se muestra una foto
     
     view.add(
       <>
-        {/* Audio del obturador */}
-        <Audio src="/shutter.mp3" play={true} volume={0.7}/>
+
         
         {/* Marco Blanco y Foto */}
      <Rect
@@ -113,11 +117,14 @@ view.add(
 
     // Animación: Zoom sutil (de 100% a 105%) durante los 3 segundos
     // yield* fotoRef().scale(1.05, duracionPorFoto);
-    
     // Limpiamos la foto antes de la siguiente
+    shutterAudio().restore();
     contenedorRef().remove();
   }
-  // yield* bgAudio().volume(0, 2);
+
+  yield* tween(3, value => {
+  bgAudio().setVolume(0.4 * (1 - value));
+});
 });
 
 /**
