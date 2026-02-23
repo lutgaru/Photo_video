@@ -39,7 +39,9 @@ export const MyVideo = () => {
 
       {/* Intro video */}
       {frame < introDuration && (
-        <Html5Video src={staticFile("/intro.mp4")} volume={0} />
+        <AbsoluteFill style={{ justifyContent: "center", alignItems: "center" }}>
+          <Html5Video src={staticFile("/intro.mp4")} volume={0} />
+        </AbsoluteFill>
       )}
 
       {/* Slideshow */}
