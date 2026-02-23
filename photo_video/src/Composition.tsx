@@ -7,7 +7,8 @@ import {
   useVideoConfig,
   interpolate,
   spring,
-  staticFile
+  staticFile,
+  Sequence
 } from "remotion";
 
 import {myPhotos} from "./photoList";
@@ -70,9 +71,12 @@ export const MyVideo = () => {
             }}
           >
             {/* Shutter sound al inicio */}
-            {localFrame < 2 && (
-              <Html5Audio src={staticFile("/shutter.mp3")} volume={0.7} />
-            )}
+<Sequence from={start} durationInFrames={20}>
+  <Html5Audio
+    src={staticFile("/shutter.mp3")}
+    volume={0.7}
+  />
+</Sequence>
 
             <div
               style={{
