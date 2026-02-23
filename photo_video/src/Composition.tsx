@@ -57,7 +57,7 @@ export const MyVideo = () => {
         const scale = interpolate(
           localFrame,
           [0, photoDurationFrames],
-          [1, 1.05]
+          [0.9, 1.0]
         );
 
         const rotation = (index * 7) % 10 - 5;
