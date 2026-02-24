@@ -36,7 +36,7 @@ export const MyVideo = () => {
   return (
     <AbsoluteFill style={{ background: "linear-gradient(#1b1b1b, #303030)" }}>
       {/* Música fondo */}
-      <Html5Audio src={staticFile("/Background.mp3")} volume={bgVolume} />
+      <Html5Audio src={staticFile("/Background.mp3")} volume={bgVolume} trimBefore={21*fps}/>
 
       {/* Intro video */}
       {frame < introDuration && (
