@@ -4,3 +4,6 @@ build*
 public*
 photoList.ts
 output*
+resources/
+.agents*
+out*
